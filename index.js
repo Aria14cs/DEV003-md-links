@@ -1,88 +1,74 @@
-const fs = require('fs');
-const path= require('path');
+// import { marked } from 'marked'
+const fs = require("fs");
+const path = require("path");
 //console.log(path,"path")
 //recibe una ruta
-const ruta='README.md';
-console.log(ruta,"ruta");
-//transforma la ruta de relativa a adsoluto
+const rutaR = "README.md";
+//console.log(rutaR);
 
-const resolveRuta = (ruta) =>{
-  const resolverRuta=path.resolve(ruta)
+const resolveRuta = (ruta) => {
+  const resolverRuta = path.resolve(ruta);
   return resolverRuta;
-}
-console.log(resolveRuta(ruta),"resolveRuta")
-
-//Verificar si el archivo existe:
-const fileExists=(ruta)=>{
-let fileExist = fs.existsSync(ruta);
-return fileExist;
-}
-console.log(fileExists(ruta),"fileExists");
-//tarea
-//confirmar si es un archivo MD 
-const fileMd =(ruta)=> {
-  const fileMd2 =path.extname(ruta)==='.md'
-  return fileMd2
-}
-console.log(fileMd('README.md'),"fileMd");
-
-
-// extraerLink('README.md')
-
-// si es archivo MD,leer el archivo MD 
-//variable  global para guardar el contenido
-let contFile=[];
-const leerFile=(ruta)=>{
-//  console.log(ruta,'rutaaa')
- const leer=fs.readFileSync(ruta,'utf-8');
- contFile = leer;
-return contFile;
 };
-leerFile('./README.md')
-console.log(contFile,'contendio')
-//console.log(leerFile('./README.md'),"LEER DATOS MD");
+//console.log(resolveRuta(rutaR));
 
-//buscar extraer link (expresion regular )
-//extraer link
-const extraerLink= (archivoLink)=>{
-  const link=RegExp(/(^|[^!])\[(.*)\]\((.*)\)/gm);
-  const valido =link.exec(archivoLink);
- console.log(valido,"validoooo")
- // const invalido=
+const fileExists = (ruta) => {
+  let fileExist = fs.existsSync(ruta);
+  return fileExist;
+};
+//console.log(fileExists(rutaR), "fileExists");
 
- return valido;
-}
-// se llama a la funcion creada y se pasa como argumento la variable global
-extraerLink(contFile);
+const fileMd = (ruta) => {
+  const fileMd2 = path.extname(ruta) === ".md";
+  return fileMd2;
+};
+//console.log(fileMd(rutaR))
 
-// }).catch(err => console.log(err.message))
+const leerFile = (ruta) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(ruta, "utf-8", (err, data) => {
+      if (err) {
+        reject(err);
+        // console.log(err,'err')
+      } else {
+        resolve(data);
+        //console.log(data,'data')
+      }
+    });
+  });
+};
+// leerFile(rutaR)
+//   .then((data) => console.log(data))
+//   .catch((error) => console.log(error));
 
-  //console.log(extraerLink('./README.md'),'extraerlinks')
-  //trabajar con promesas
-//sincrono
-// const extraerLink=(archivoLink)=>{
-//   console.log(archivoLink,'archivoLink');
-//   const link=/^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
-   
-//      const valido=archivoLink.match(link)
-//         console.log(valido,"valido");
-//         const invalido=mdlink.match(link)
-//        console.log(invalido,"invalido");
-//  //arroja array que se encuentran en el texto
-//    return valido;
+const extraerLink = (data, ruta) => {
 
-// }
-// console.log(extraerLink(ruta));
-// validar link
+  const expresionRegular = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g;
+  //console.log(expresionRegular,'gggg')
+  let links = [];
+  const matchLink = data.match(expresionRegular);
+  if (matchLink !== null) {
+  matchLink.forEach(link => {
+    //console.log(link,'linkkk')
+   links.push({
+   href:link.slice(link.indexOf('](h')+2,-1),
+   text:link.slice(1,link.indexOf(']')),
+  //  href:link[1],
+  file:ruta,
+  });
+  });
+   }
+  console.log(links);
+  return links;
+};
 
+leerFile(rutaR).then((result) => {
+  extraerLink(result, rutaR);
+});
 
-// texto y ruta 
-// FECH CONSULTA  HTT PARA HTT
-//-- VALIDED
+// console.log(extraerLink "extraerlinks");
 
-//funciones creada para exportar el modulo, para pasar la test
 module.exports = {
-fileMd,
-leerFile
+  fileMd,
+  leerFile,
 };
-
