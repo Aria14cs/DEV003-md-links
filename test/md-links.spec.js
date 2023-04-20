@@ -1,4 +1,4 @@
-const { fileMd, leerFile }=require('../index.js');
+const { fileMd, leerFile }=require('../funciones.js');
 //const mdLinks = require('./index.js');
 // describe('mdLinks', () => {
 //   it('should...', () => {
