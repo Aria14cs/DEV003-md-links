@@ -1,10 +1,5 @@
-// import { marked } from 'marked'
 const fs = require("fs"); //libreria de node
 const path = require("path");//libreria de node
-//console.log(path,"path")
-//recibe una ruta
-const rutaR = "README.md";
-//console.log(rutaR);
 
 const resolveRuta = (ruta) => {
   const resolverRuta = path.resolve(ruta);
@@ -77,6 +72,7 @@ let linksArray=[];
         text:link.text,
         file:link.file,
         status: response.status,
+        ok:response.statusText
       });
       return linksArray
     })
